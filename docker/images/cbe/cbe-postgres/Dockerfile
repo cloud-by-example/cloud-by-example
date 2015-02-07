@@ -10,7 +10,7 @@ RUN update-locale LANG=en_US.UTF-8
 RUN apt-get update && apt-get install -y python-software-properties software-properties-common \
 	postgresql-9.3 postgresql-client-9.3 postgresql-contrib-9.3
 
-USER postgres ]]><co id="cbe-images-postgresql-dockerfile-callout01" /><![CDATA[
+USER postgres
 
 RUN echo "host all  all    0.0.0.0/0  md5" >> /etc/postgresql/9.3/main/pg_hba.conf
 RUN echo "listen_addresses='*'" >> /etc/postgresql/9.3/main/postgresql.conf
