@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p" 
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context 
+                           http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <bean id="dockerUrl" class="java.lang.String">
+        <constructor-arg value="#{'http://' + '${docker.host}' + ':' + '${docker.port}'}" />
+    </bean>
+
+    <!--
+        Set system property to use with override (instead of using docker.io.properties file) 
+    -->
+    <bean id="dockerIoUrl"
+          class="org.springframework.beans.factory.config.MethodInvokingFactoryBean" 
+          p:targetClass="java.lang.System" 
+          p:targetMethod="setProperty">
+        <property name="arguments">
+            <list>
+                <value>docker.io.url</value>
+                <ref bean="dockerUrl" />
+            </list>
+        </property>
+    </bean>
+
+    <!-- Create docker client config-->
+    <bean id="dockerClientConfig"
+          class="org.springframework.beans.factory.config.MethodInvokingFactoryBean" 
+          p:targetMethod="build"
+          depends-on="dockerIoUrl">
+        <property name="targetObject">
+            <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean"
+                  p:targetMethod="withVersion">
+                <property name="targetObject">
+                    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean" 
+                          p:targetClass="com.github.dockerjava.core.DockerClientConfig"
+                          p:targetMethod="createDefaultConfigBuilder">
+                    </bean>
+                </property>
+                <property name="arguments">
+                    <list>
+                        <value>${docker.version}</value>
+                    </list>
+                </property>        
+            </bean>
+        </property>
+    </bean>
+
+    <!-- override 'java.io.url' with system property -->
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean" 
+          p:targetClass="com.github.dockerjava.core.DockerClientConfig"
+          p:targetMethod="overrideDockerPropertiesWithSystemProperties"
+          depends-on="dockerClientConfig">
+        <property name="arguments">
+            <list>
+<!--                 <props> -->
+<!--                     <prop key="java.io.url">java.io.url</prop> -->
+<!--                 </props> -->
+                <bean class="java.util.Properties" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="dockerClient"
+          class="com.github.dockerjava.core.DockerClientImpl">
+        <constructor-arg ref="dockerClientConfig" />
+    </bean>
+
+</beans>

@@ -1,0 +1,130 @@
+<xsd:schema xmlns="http://www.cloudbyexample.org/dc/schema/beans/docker/image"
+            targetNamespace="http://www.cloudbyexample.org/dc/schema/beans/docker/image"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" 
+            xmlns:annox="http://annox.dev.java.net" 
+            jaxb:extensionBindingPrefixes="annox"
+            xmlns:entity="http://www.springbyexample.org/schema/beans/entity"
+            xmlns:response="http://www.springbyexample.org/schema/beans/response"
+            xmlns:application="http://www.cloudbyexample.org/dc/schema/beans/application">
+
+    <!--
+        Image represent direct model of a Docker JSON Image.
+    -->
+    <xsd:import namespace="http://www.springbyexample.org/schema/beans/entity" schemaLocation="entity-base.xsd" />
+    <xsd:import namespace="http://www.springbyexample.org/schema/beans/response" schemaLocation="response-base.xsd" />
+    <xsd:import namespace="http://www.cloudbyexample.org/dc/schema/beans/application" schemaLocation="application.xsd" />
+
+    <xsd:element name="docker-image-find-request">
+        <xsd:complexType>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="docker-image-request">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="command" type="image-command-type" />
+                <xsd:element name="request" type="docker-image" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    <xsd:element name="docker-image-response">
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="response:abstract-response">
+                    <xsd:sequence>
+                        <xsd:element name="errors" type="xsd:boolean" />
+                        <xsd:element name="message-list" type="response:message" minOccurs="0" maxOccurs="unbounded" />
+
+                        <xsd:element name="results" type="docker-image" />
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="docker-image-find-response">
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="response:abstract-response">
+                    <xsd:sequence>
+                        <xsd:element name="errors" type="xsd:boolean" />
+                        <xsd:element name="message-list" type="response:message" minOccurs="0" maxOccurs="unbounded" />
+                    
+                        <xsd:element name="results" type="docker-image" minOccurs="0" maxOccurs="unbounded" />
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:complexType name="docker-image">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <annox:annotate>
+                    <annox:annotate annox:class="javax.xml.bind.annotation.XmlRootElement" name="image"/>
+                </annox:annotate>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="entity:pk-string-entity-base">
+                <xsd:sequence>
+<!--                     <xsd:element name="id" type="xsd:string" /> -->
+<!--                     <xsd:element name="created" type="xsd:dateTime" /> -->
+
+                    <xsd:element name="uuid" type="xsd:string" />
+                    <xsd:element name="size" type="xsd:int" />
+                    <xsd:element name="virtual-size" type="xsd:int" />
+                    <xsd:element name="repo-tags" type="xsd:string" minOccurs="0" maxOccurs="unbounded" />
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="docker-image-archive">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <annox:annotate>
+                    <annox:annotate annox:class="javax.xml.bind.annotation.XmlRootElement" name="docker-image-archive"/>
+                </annox:annotate>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="docker-image">
+                <xsd:sequence>
+                    <xsd:element name="archive-url" type="xsd:string" />
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="docker-image-dir">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <annox:annotate>
+                    <annox:annotate annox:class="javax.xml.bind.annotation.XmlRootElement" name="docker-image-dir"/>
+                </annox:annotate>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="docker-image">
+                <xsd:sequence>
+                    <!-- Either populate dockerfile or dockerfile-url -->
+                    <xsd:element name="dockerfile" type="xsd:string" />
+                    <xsd:element name="dockerfile-url" type="xsd:string" />
+                    
+                    <xsd:element name="files" type="application:file" minOccurs="0" maxOccurs="unbounded" />
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:simpleType name="image-command-type">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="BUILD" />
+            <xsd:enumeration value="REMOVE" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+</xsd:schema>

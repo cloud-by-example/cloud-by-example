@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/integration"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:context="http://www.springframework.org/schema/context"
+             xmlns:stream="http://www.springframework.org/schema/integration/stream"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans
+                                 http://www.springframework.org/schema/beans/spring-beans.xsd
+                                 http://www.springframework.org/schema/context
+                                 http://www.springframework.org/schema/context/spring-context.xsd
+                                 http://www.springframework.org/schema/integration
+                                 http://www.springframework.org/schema/integration/spring-integration-4.1.xsd
+                                 http://www.springframework.org/schema/integration/stream
+                                 http://www.springframework.org/schema/integration/stream/spring-integration-stream-4.1.xsd">
+
+    <beans:import resource="classpath*:/META-INF/spring/si/si-executor-context.xml" />
+    
+    <context:property-placeholder location="classpath*:META-INF/config/services/services.properties" />
+    
+    <!-- 
+           ApplicationFlow
+                |
+        [processApplication]
+                |
+          header-enricher
+                |    
+        applicationHeader            
+                |                
+      imageTemplateSplitter
+                |
+        [processImageTemplate]
+                |
+        imageTemplateProcessor
+                |
+        [processedImageTemplate]
+                |
+      imageTemplateAggregator
+                |
+        [processedAppplication]
+                |
+        applicationFlowEndpoint
+    -->
+    
+    <annotation-config/>
+
+    <gateway id="applicationFlow" service-interface="org.cloudbyexample.dc.service.si.application.ApplicationFlow"/>
+    
+    <channel id="processApplication"/>
+    
+    <header-enricher input-channel="processApplication" output-channel="applicationHeader">
+        <header name="APPLICATION" expression="payload"/>
+    </header-enricher>    
+
+    <channel id="applicationHeader"/>
+    
+    <splitter input-channel="applicationHeader" output-channel="processImageTemplate">
+        <beans:bean class="org.cloudbyexample.dc.service.si.application.MockImageTemplateSplitter" />
+    </splitter>
+    
+    <channel id="processImageTemplate" >
+         <dispatcher task-executor="applicationFlowExecutor" />
+    </channel>
+    
+    <service-activator input-channel="processImageTemplate" output-channel="processedImageTemplate">
+        <beans:bean class="org.cloudbyexample.dc.service.si.application.MockImageTemplateProcessor" />
+    </service-activator>
+    
+    <channel id="processedImageTemplate"/>
+    
+    <aggregator input-channel="processedImageTemplate" output-channel="processedAppplication">
+        <beans:bean class="org.cloudbyexample.dc.service.si.application.MockImageTemplateAggregator" />
+    </aggregator>
+    
+    <channel id="processedAppplication"/>
+    
+    <outbound-channel-adapter channel="processedAppplication" method="processMessage">
+        <beans:bean class="org.cloudbyexample.dc.service.si.application.MockApplicationFlowEndpoint" />
+    </outbound-channel-adapter>
+    
+</beans:beans>

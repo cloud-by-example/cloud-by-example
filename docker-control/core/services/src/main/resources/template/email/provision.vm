@@ -1,0 +1,9 @@
+<html>
+<body>
+<h1>Docker Control</h1>
+<p>
+	The application '${application.name}' scheduled for provisioning at ${task.scheduled} 
+	has been processed.
+</p>
+</body>
+</html>

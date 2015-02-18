@@ -1,0 +1,130 @@
+<xsd:schema xmlns="http://www.cloudbyexample.org/dc/schema/beans/container"
+            targetNamespace="http://www.cloudbyexample.org/dc/schema/beans/container"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" 
+            xmlns:annox="http://annox.dev.java.net" 
+            jaxb:extensionBindingPrefixes="annox"
+            xmlns:entity="http://www.springbyexample.org/schema/beans/entity"
+            xmlns:response="http://www.springbyexample.org/schema/beans/response">
+
+    <xsd:import namespace="http://www.springbyexample.org/schema/beans/entity" schemaLocation="entity-base.xsd" />
+    <xsd:import namespace="http://www.springbyexample.org/schema/beans/response" schemaLocation="response-base.xsd" />
+
+    <xsd:element name="container-find-request">
+        <xsd:complexType>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="container-request">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="command" type="container-command-type" />
+                <xsd:element name="request" type="container" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    <xsd:element name="container-response">
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="response:abstract-entity-response-result">
+                    <xsd:sequence>
+                        <xsd:element name="results" type="container" />
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="container-find-response">
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="response:abstract-entity-find-response-result">
+                    <xsd:sequence>
+                       <xsd:element name="results" type="container" minOccurs="0" maxOccurs="unbounded" />
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:complexType name="container">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <annox:annotate>
+                    <annox:annotate annox:class="javax.xml.bind.annotation.XmlRootElement" name="container"/>
+                </annox:annotate>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="entity:pk-uuid-entity-base">
+                <xsd:sequence>
+<!--                     <xsd:element name="id" type="xsd:string" /> -->
+
+					<xsd:element name="imageDescription" type="xsd:string" />
+					<xsd:element name="imagePicture" type="xsd:string" />
+					<xsd:element name="containerId" type="xsd:string" />
+					<xsd:element name="name" type="xsd:string" />
+					<xsd:element name="containerName" type="xsd:string" />
+					<xsd:element name="upTime" type="xsd:string" />
+					<xsd:element name="ipAddress" type="xsd:string" />
+					<xsd:element name="env" type="xsd:string" />
+					
+                    <xsd:element name="image" type="xsd:string" />
+                    <xsd:element name="command" type="xsd:string" />
+<!--                     <xsd:element name="created" type="xsd:dateTime" /> -->
+                    <xsd:element name="status" type="xsd:string" />
+                    <xsd:element name="ports" type="port-bindings" minOccurs="0" maxOccurs="unbounded" />
+                    <xsd:element name="links" type="link" minOccurs="0" maxOccurs="unbounded" />
+                    <xsd:element name="size-rw" type="xsd:int" />
+                    <xsd:element name="size-root-fs" type="xsd:int" />
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="port-bindings">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <annox:annotate>
+                    <annox:annotate annox:class="javax.xml.bind.annotation.XmlRootElement" name="port-bindings"/>
+                </annox:annotate>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:sequence>                
+            <xsd:element name="private-port" type="xsd:int" />
+            <xsd:element name="public-port" type="xsd:int" />
+            <xsd:element name="type" type="xsd:string" />
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="link">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <annox:annotate>
+                    <annox:annotate annox:class="javax.xml.bind.annotation.XmlRootElement" name="link"/>
+                </annox:annotate>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:sequence>                
+            <xsd:element name="name" type="xsd:string" />
+            <xsd:element name="alias" type="xsd:string" />
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:simpleType name="container-command-type">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="CREATE_START" />
+            <xsd:enumeration value="CREATE" />
+            <xsd:enumeration value="INSPECT" />
+            <xsd:enumeration value="START" />
+            <xsd:enumeration value="STOP" />
+            <xsd:enumeration value="KILL" />
+            <xsd:enumeration value="PAUSE" />
+            <xsd:enumeration value="ATTACH" />
+            <xsd:enumeration value="WAIT" />
+            <xsd:enumeration value="REMOVE" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+</xsd:schema>

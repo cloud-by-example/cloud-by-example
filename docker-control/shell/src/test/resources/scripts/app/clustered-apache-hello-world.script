@@ -1,0 +1,7 @@
+app --name "clustered-hello-world" --version "1.0" --type "STANDARD"
+  web-template --name "lb"
+    file-copy --name "index.html" --url "http://www.cloudbyexample.org/repo/docker/images/apache-hello-world/index.html" --destination "/var/www/html"
+  web-template-end
+  container-template --image "${lb.id}" --expose-ports true --cluster-size 4
+app-end
+

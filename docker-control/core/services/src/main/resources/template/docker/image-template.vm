@@ -1,0 +1,8 @@
+FROM ${template.name} 
+
+MAINTAINER Cloud by Example
+
+#foreach( $fileCopy in $template.fileCopys )
+ADD $fileCopy.name .
+RUN mv $fileCopy.name $fileCopy.destination;chmod 755 $fileCopy.destination/$fileCopy.name;
+#end

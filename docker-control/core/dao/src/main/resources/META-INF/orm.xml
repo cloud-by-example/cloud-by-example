@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm" 
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm orm_2_0.xsd" 
+                 version="2.0">
+
+    <persistence-unit-metadata>
+        <persistence-unit-defaults>
+            <entity-listeners>
+                <entity-listener class="org.springframework.data.jpa.domain.support.AuditingEntityListener" />
+            </entity-listeners>
+        </persistence-unit-defaults>
+    </persistence-unit-metadata>
+    
+    <named-query name="Application.findOsOrSoftware">
+        <query><![CDATA[
+            SELECT a
+            FROM Application a 
+            WHERE a.type != org.cloudbyexample.dc.orm.entity.application.ApplicationType.STANDARD
+            ORDER BY a.name
+        ]]></query>
+    </named-query>
+
+    <named-query name="Application.findStandard">
+        <query><![CDATA[
+            SELECT a
+            FROM Application a 
+            WHERE a.type = org.cloudbyexample.dc.orm.entity.application.ApplicationType.STANDARD 
+            ORDER BY a.name
+        ]]></query>
+    </named-query>
+
+    <named-query name="ProvisionTask.findScheduledTasks">
+        <!-- 
+            provision is scheduled, scheduled is less than 'now', and it hasn't started.
+            
+            FIXME: add check if application status is BUILT (image templates processed) 
+        -->
+        <query><![CDATA[
+            SELECT pt
+            FROM ProvisionTask pt 
+            WHERE pt.scheduled <= :currentTime AND 
+                  pt.provisionTaskStatus = org.cloudbyexample.dc.orm.entity.provision.ProvisionTaskStatus.SCHEDULED AND 
+                  pt.started = null
+            ORDER BY pt.scheduled
+        ]]></query>
+    </named-query>
+
+</entity-mappings>

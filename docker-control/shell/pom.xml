@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.cloudbyexample</groupId>
+        <artifactId>proto-pom-example</artifactId>
+        <version>0.5</version>
+        <relativePath>../proto-pom/example</relativePath>
+    </parent>
+
+    <groupId>org.cloudbyexample</groupId>
+    <artifactId>dc-shell</artifactId>
+    <version>${dc.app.version}</version>
+    <name>DC Shell</name>
+    <description>
+        DC Shell used for command line interaction and scripting
+        of the REST API.
+    </description>
+
+    <properties>
+        <jar.main.class>org.springframework.shell.Bootstrap</jar.main.class>
+    </properties>
+    
+    <dependencies>
+        <dependency>
+            <groupId>org.cloudbyexample</groupId>
+            <artifactId>dc-ws-beans</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.cloudbyexample</groupId>
+            <artifactId>dc-rest-services</artifactId>
+            <classifier>rest-client</classifier>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.cloudbyexample</groupId>
+                    <artifactId>dc-services</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.springframework.data</groupId>
+                	<artifactId>spring-data-jpa</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+<!--         <dependency> -->
+<!--             <groupId>org.cloudbyexample</groupId> -->
+<!--             <artifactId>dc-test</artifactId> -->
+<!--         </dependency> -->
+
+        <dependency>
+            <groupId>org.springframework.shell</groupId>
+            <artifactId>spring-shell</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>dc-shell</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>${jar.main.class}</mainClass>
+                                </transformer>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                    <resource>META-INF/spring.handlers</resource>
+                                </transformer>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                    <resource>META-INF/spring.schemas</resource>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            <!-- 
+                builds a min jar that references a lib dir 
+            -->
+            <!-- copy all dependencies into a lib/ directory -->
+<!--             <plugin> -->
+<!--                 <groupId>org.apache.maven.plugins</groupId> -->
+<!--                 <artifactId>maven-dependency-plugin</artifactId> -->
+<!--                 <version>2.1</version> -->
+<!--                 <executions> -->
+<!--                     <execution> -->
+<!--                         <id>copy-dependencies</id> -->
+<!--                         <phase>prepare-package</phase> -->
+<!--                         <goals> -->
+<!--                             <goal>copy-dependencies</goal> -->
+<!--                         </goals> -->
+<!--                         <configuration> -->
+<!--                             <outputDirectory>${project.build.directory}/lib</outputDirectory> -->
+<!--                             <overWriteReleases>true</overWriteReleases> -->
+<!--                             <overWriteSnapshots>true</overWriteSnapshots> -->
+<!--                             <overWriteIfNewer>true</overWriteIfNewer> -->
+<!--                         </configuration> -->
+<!--                     </execution> -->
+<!--                 </executions> -->
+<!--             </plugin> -->
+        
+            <!-- make the jar executable by adding a Main-Class and Class-Path to the manifest -->
+<!--             <plugin> -->
+<!--                 <groupId>org.apache.maven.plugins</groupId> -->
+<!--                 <artifactId>maven-jar-plugin</artifactId> -->
+<!--                 <version>2.3.1</version> -->
+<!--                 <configuration> -->
+<!--                     <archive> -->
+<!--                         <manifest> -->
+<!--                             <addClasspath>true</addClasspath> -->
+<!--                             <classpathPrefix>lib/</classpathPrefix> -->
+<!--                             <mainClass>${jar.main.class}</mainClass> -->
+<!--                         </manifest> -->
+<!--                     </archive> -->
+<!--                 </configuration> -->
+<!--             </plugin>         -->            
+        </plugins>        
+    </build>
+    
+</project>

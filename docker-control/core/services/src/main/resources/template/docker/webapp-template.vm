@@ -1,0 +1,19 @@
+FROM cloudbyexample/cbe:tomcat-7.0.57
+
+MAINTAINER Cloud by Example
+
+#foreach( $fileCopy in $template.fileCopys )
+ADD $fileCopy.name .
+#if ($fileCopy.archive)
+
+#if ($fileCopy.name.endsWith('.zip') || $fileCopy.name.endsWith('.war'))
+RUN mkdir -p $fileCopy.destination;unzip $fileCopy.name -d $fileCopy.destination;chmod -R 755 $fileCopy.destination;
+#elseif ($fileCopy.name.endsWith('.tar'))
+RUN mkdir -p $fileCopy.destination;tar xvf $fileCopy.name -C $fileCopy.destination;chmod -R 755 $fileCopy.destination;
+#end
+
+#else
+RUN mkdir -p $fileCopy.destination;mv $fileCopy.name $fileCopy.destination;chmod 755 $fileCopy.destination/$fileCopy.name;
+#end
+
+#end

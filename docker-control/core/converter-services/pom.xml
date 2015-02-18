@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.cloudbyexample</groupId>
+        <artifactId>proto-pom-example</artifactId>
+        <version>0.5</version>
+        <relativePath>../../proto-pom/example</relativePath>
+    </parent>
+
+    <groupId>org.cloudbyexample</groupId>
+    <artifactId>dc-converter-services</artifactId>
+    <version>${dc.app.version}</version>
+    <name>DC Converter Services</name>
+    <description>
+        DC converter services for conversion between different models.
+    </description>
+    
+    <dependencies>
+        <dependency>
+            <groupId>org.cloudbyexample</groupId>
+            <artifactId>dc-ws-beans</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.cloudbyexample</groupId>
+            <artifactId>dc-dao</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.hibernate</groupId>
+                    <artifactId>hibernate-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.hibernate</groupId>
+                    <artifactId>hibernate-entitymanager</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.hibernate</groupId>
+                    <artifactId>hibernate-ehcache</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.postgresql</groupId>
+                    <artifactId>postgresql</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-jdbc</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-orm</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-tx</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework.security</groupId>
+                    <artifactId>spring-security-core</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>org.springframework.data</groupId>
+                	<artifactId>spring-data-jpa</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.cloudbyexample</groupId>
+            <artifactId>dc-test</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springbyexample</groupId>
+            <artifactId>sbe-rest-services</artifactId>
+        </dependency>
+                
+        <dependency>
+            <groupId>net.sf.dozer</groupId>
+            <artifactId>dozer</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.dozer</groupId>
+            <artifactId>dozer-spring</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>

@@ -1,0 +1,31 @@
+<xsd:schema xmlns="http://www.cloudbyexample.org/dc/schema/beans/notification"
+            targetNamespace="http://www.cloudbyexample.org/dc/schema/beans/notification"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" 
+            xmlns:annox="http://annox.dev.java.net" 
+            jaxb:extensionBindingPrefixes="annox"
+            xmlns:entity="http://www.springbyexample.org/schema/beans/entity"
+            xmlns:response="http://www.springbyexample.org/schema/beans/response"
+            xmlns:application="http://www.cloudbyexample.org/dc/schema/beans/application">
+
+    <xsd:import namespace="http://www.springbyexample.org/schema/beans/entity" schemaLocation="entity-base.xsd" />
+    <xsd:import namespace="http://www.springbyexample.org/schema/beans/response" schemaLocation="response-base.xsd" />
+
+    <xsd:complexType name="notification">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <annox:annotate>
+                    <annox:annotate annox:class="javax.xml.bind.annotation.XmlRootElement" name="notification"/>
+                </annox:annotate>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="entity:pk-entity-base">
+                <xsd:sequence>
+                    <xsd:element name="email" type="xsd:string" />
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+</xsd:schema>

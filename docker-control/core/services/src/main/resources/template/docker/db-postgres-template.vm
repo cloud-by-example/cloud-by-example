@@ -1,0 +1,20 @@
+FROM cloudbyexample/cbe:postgresql-9.3
+
+MAINTAINER Cloud by Example
+
+# add SQL scripts
+#foreach( $sqlFile in $template.sqlFiles )
+ADD ./$sqlFile.name .
+#end
+
+USER postgres
+
+RUN    /etc/init.d/postgresql start &&\
+    psql --command "CREATE USER $template.username WITH SUPERUSER PASSWORD '$template.password';" &&\
+    createdb -O $template.dbName $template.dbName 
+
+RUN    /etc/init.d/postgresql start &&\
+#foreach( $sqlFile in $template.sqlFiles )
+    psql -U postgres -d $template.dbName -f $sqlFile.name #if( $foreach.hasNext )&&\ 
+#end
+#end

@@ -1,0 +1,17 @@
+app --name "contact-two-tier" --version "1.0" --type "STANDARD"
+  db-template --name "contact-db" --db-name "contact" --username "contact" --password "contact"
+    sql-file --name "schema.sql" --url "http://www.cloudbyexample.org/repo/docker/images/contact-db/schema.sql"
+    sql-file --name "security_schema.sql" --url "http://www.cloudbyexample.org/repo/docker/images/contact-db/security_schema.sql"
+  db-template-end
+
+  webapp-template --name "contact-webapp"
+    war --name "contact.war" --url "http://www.cloudbyexample.org/repo/docker/images/contact-multi-tier-webapp/contact.war"
+    
+    file-copy --name "contact-app.properties" --url "http://www.cloudbyexample.org/repo/docker/images/contact-multi-tier-webapp/contact-app.properties" --destination "/usr/local/tomcat/webapps/contact/WEB-INF/classes/META-INF/config"
+    file-copy --name "setenv.sh" --url "http://www.cloudbyexample.org/repo/docker/images/contact-multi-tier-webapp/setenv.sh" --destination "/usr/local/tomcat/bin"
+  webapp-template-end
+  
+  container-template --image "${contact-db.id}" --name "contact-db"
+  container-template --image "${contact-webapp.id}" --links "${contact-db}:contact-db" --expose-ports true
+app-end
+

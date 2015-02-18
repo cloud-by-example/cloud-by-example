@@ -1,0 +1,7 @@
+app --name "contact-single-tier" --version "1.0" --type "STANDARD"
+  webapp-template --name "webapp"
+    war --name "contact.war" --url "http://www.cloudbyexample.org/repo/docker/images/contact-single-tier-webapp/contact.war"
+  webapp-template-end
+  container-template --image "${webapp.id}" --expose-ports true
+app-end
+

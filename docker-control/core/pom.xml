@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>org.cloudbyexample</groupId>
+	<artifactId>dc-parent-core</artifactId>
+	<version>1.0</version>
+	<packaging>pom</packaging>
+	<name>DC Core</name>
+    <description>
+        Core to aggregate DC application modules.
+    </description>
+
+    <modules>
+        <module>dc-test</module>
+        <module>util</module>
+        <module>ws-beans</module>
+        <module>dao</module>
+        <module>converter-services</module>
+        <module>services</module>
+        <module>rest-services</module>
+        <module>agent</module>
+    </modules>
+
+</project>
+

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/integration"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:context="http://www.springframework.org/schema/context"
+             xmlns:stream="http://www.springframework.org/schema/integration/stream"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans
+                                 http://www.springframework.org/schema/beans/spring-beans.xsd
+                                 http://www.springframework.org/schema/context
+                                 http://www.springframework.org/schema/context/spring-context.xsd
+                                 http://www.springframework.org/schema/integration
+                                 http://www.springframework.org/schema/integration/spring-integration-4.1.xsd
+                                 http://www.springframework.org/schema/integration/stream
+                                 http://www.springframework.org/schema/integration/stream/spring-integration-stream-4.1.xsd">
+
+    <!-- 
+    -->
+    
+    <annotation-config/>
+
+    <!-- FIXME: temp test to get working, then will decouple flow so app and provision are separate -->
+    <gateway id="provisionFlow" service-interface="org.cloudbyexample.dc.service.si.provision.ProvisionFlow"/>
+    
+    <channel id="processProvision"/>
+    
+    <header-enricher input-channel="processProvision" output-channel="provisionHeader">
+        <header name="PROVISION" expression="payload"/>
+    </header-enricher>    
+
+    <channel id="provisionHeader"/>
+    
+    
+    <bridge input-channel="provisionHeader" output-channel="processContainerTemplate" />
+    
+    <channel id="processContainerTemplate" >
+         <dispatcher task-executor="provisionFlowExecutor" />
+    </channel>
+    
+    <service-activator input-channel="processContainerTemplate" output-channel="processedContainerTemplate">
+        <beans:bean class="org.cloudbyexample.dc.service.si.provision.ContainerTemplateProcessor" />
+    </service-activator>
+    
+    <channel id="processedContainerTemplate"/>
+    
+    <bridge input-channel="processedContainerTemplate" output-channel="processedProvision" />
+    
+    <channel id="processedProvision">
+        <interceptors>
+            <wire-tap channel="processNotification" />
+        </interceptors>
+    </channel>
+    
+    <outbound-channel-adapter channel="processedProvision" method="processMessage">
+        <beans:bean class="org.cloudbyexample.dc.service.si.provision.ProvisionFlowEndpoint" />
+    </outbound-channel-adapter>
+    
+</beans:beans>

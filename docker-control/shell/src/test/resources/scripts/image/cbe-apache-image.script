@@ -1,0 +1,3 @@
+app --name "cbe-apache" --version "1.0" --type "SOFTWARE"
+  container-template --image "cloudbyexample/cbe:apache" --expose-ports true
+app-end

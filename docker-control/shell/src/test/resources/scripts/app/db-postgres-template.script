@@ -1,0 +1,8 @@
+app --name "postgres-db" --version "1.0" --type "STANDARD"
+  db-template --name "db" --db-name "contact" --username "contact" --password "contact"
+    sql-file --name "schema.sql" --url "http://www.cloudbyexample.org/repo/docker/images/contact-db/schema.sql"
+    sql-file --name "security_schema.sql" --url "http://www.cloudbyexample.org/repo/docker/images/contact-db/security_schema.sql"
+  db-template-end
+  container-template --image "${db.id}" --expose-ports true
+app-end
+

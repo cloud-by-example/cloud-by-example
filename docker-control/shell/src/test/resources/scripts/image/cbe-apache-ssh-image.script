@@ -1,0 +1,3 @@
+app --name "cbe-apache-ssh" --version "1.0" --type "SOFTWARE"
+  container-template --image "cbe:apache-ssh" --expose-ports true
+app-end

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+                           http://www.springframework.org/schema/context
+                           http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/task
+                           http://www.springframework.org/schema/task/spring-task.xsd">
+
+    <context:component-scan base-package="org.cloudbyexample.dc.scheduling" />
+    
+    <task:executor id="quartzTaskExecutor" pool-size="5" queue-capacity="10" />
+
+    <bean id="provisionTrigger"
+          class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+          p:cronExpression="${quartz.cron.expression.provision}">
+        <property name="jobDetail">
+            <bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean"
+                  p:durability="true">
+                <property name="jobClass" value="org.cloudbyexample.dc.scheduling.ProvisionTaskStatefulJob" />
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="statusTrigger"
+          class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+          p:cronExpression="${quartz.cron.expression.status}">
+        <property name="jobDetail">
+            <bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean"
+                  p:durability="true">
+                <property name="jobClass" value="org.cloudbyexample.dc.scheduling.StatusStatefulJob" />
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="abstractScheduler" 
+          class="org.springframework.scheduling.quartz.SchedulerFactoryBean"
+          abstract="true"
+          p:taskExecutor-ref="quartzTaskExecutor"
+          p:waitForJobsToCompleteOnShutdown="true">
+        <property name="triggers">
+            <list>
+                <ref bean="provisionTrigger" />
+                <ref bean="statusTrigger" />
+            </list>
+        </property>
+        <property name="schedulerContextAsMap">
+            <map>
+                <entry key="provisionScheduleProcessor">
+                    <ref bean="provisionScheduleProcessor" />
+                </entry>
+                <entry key="statusScheduleProcessor">
+                    <ref bean="statusScheduleProcessor" />
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+    <beans profile="hsql">
+        <bean id="scheduler"
+              parent="abstractScheduler">
+            <property name="quartzProperties">
+                <props>
+                    <prop key="org.quartz.jobStore.class">${quartz.jdbc.driver.delegate}</prop>
+                </props>
+            </property>
+        </bean>
+    </beans>    
+    <beans profile="postgresql">
+        <!--
+            PostgreSQL DB store need the following added to postgresql.conf:
+                bytea_output='escape'
+        -->    
+        <bean id="scheduler"
+              parent="abstractScheduler" 
+              p:dataSource-ref="dataSource"
+              p:transactionManager-ref="transactionManager">
+            <property name="quartzProperties">
+                <props>
+                    <prop key="org.quartz.jobStore.driverDelegateClass">${quartz.jdbc.driver.delegate}</prop>
+                    <prop key="org.quartz.scheduler.instanceName">DcQuartz</prop>
+                    <prop key="org.quartz.scheduler.instanceId">AUTO</prop>
+                    <prop key="org.quartz.jobStore.isClustered">true</prop>
+                    <prop key="org.quartz.jobStore.clusterCheckinInterval">30000</prop>
+                    <prop key="org.quartz.jobStore.misfireThreshold">600000</prop>
+                </props>
+            </property>
+        </bean>
+    </beans>
+
+</beans>

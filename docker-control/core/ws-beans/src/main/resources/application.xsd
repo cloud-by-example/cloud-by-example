@@ -1,0 +1,209 @@
+<xsd:schema xmlns="http://www.cloudbyexample.org/dc/schema/beans/application"
+            targetNamespace="http://www.cloudbyexample.org/dc/schema/beans/application"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" 
+            xmlns:annox="http://annox.dev.java.net" 
+            jaxb:extensionBindingPrefixes="annox"
+            xmlns:entity="http://www.springbyexample.org/schema/beans/entity"
+            xmlns:response="http://www.springbyexample.org/schema/beans/response"
+            xmlns:container="http://www.cloudbyexample.org/dc/schema/beans/docker/container">
+
+    <xsd:import namespace="http://www.springbyexample.org/schema/beans/entity" schemaLocation="entity-base.xsd" />
+    <xsd:import namespace="http://www.springbyexample.org/schema/beans/response" schemaLocation="response-base.xsd" />
+    <xsd:import namespace="http://www.cloudbyexample.org/dc/schema/beans/docker/container" schemaLocation="docker-container.xsd" />
+
+    <xsd:element name="application-find-request">
+        <xsd:complexType>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="application-request">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="request" type="application" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    <xsd:element name="application-response">
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="response:abstract-entity-response-result">
+                    <xsd:sequence>
+                        <xsd:element name="results" type="application" />
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="application-find-response">
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="response:abstract-entity-find-response-result">
+                    <xsd:sequence>
+                       <xsd:element name="results" type="application" minOccurs="0" maxOccurs="unbounded" />
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:complexType name="application">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <annox:annotate>
+                    <annox:annotate annox:class="javax.xml.bind.annotation.XmlRootElement" name="application"/>
+                </annox:annotate>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="entity:pk-uuid-entity-base">
+                <xsd:sequence>
+                    <xsd:element name="name" type="xsd:string" />
+                    <xsd:element name="description" type="xsd:string" />
+                    <xsd:element name="version" type="xsd:string" />
+                    <xsd:element name="type" type="application-type" />
+                    
+                    <xsd:element name="image-templates" type="image-template" minOccurs="0" maxOccurs="unbounded" />
+                    <xsd:element name="container-templates" type="container-template" minOccurs="0" maxOccurs="unbounded" />
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="image-template">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <annox:annotate>
+                    <annox:annotate annox:class="javax.xml.bind.annotation.XmlRootElement" name="image-template"/>
+                </annox:annotate>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="entity:pk-entity-base">
+                <xsd:sequence>
+                    <xsd:element name="uuid" type="xsd:string" />
+                    <xsd:element name="name" type="xsd:string" />
+                    <xsd:element name="tag" type="xsd:string" />
+        
+                    <xsd:element name="file-copys" type="file-copy" minOccurs="0" maxOccurs="unbounded" />
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    
+    <xsd:complexType name="db-template">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <annox:annotate>
+                    <annox:annotate annox:class="javax.xml.bind.annotation.XmlRootElement" name="db-template"/>
+                </annox:annotate>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="image-template">
+                <xsd:sequence>
+                    <xsd:element name="db-name" type="xsd:string" />
+                    <xsd:element name="username" type="xsd:string" />
+                    <xsd:element name="password" type="xsd:string" />
+                    
+                    <xsd:element name="sql-files" type="file-copy" minOccurs="0" maxOccurs="unbounded" />
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="webapp-template">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <annox:annotate>
+                    <annox:annotate annox:class="javax.xml.bind.annotation.XmlRootElement" name="webapp-template"/>
+                </annox:annotate>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="image-template">
+                <xsd:sequence>
+                    <xsd:element name="war" type="file-copy" />
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="web-template">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <annox:annotate>
+                    <annox:annotate annox:class="javax.xml.bind.annotation.XmlRootElement" name="web-template"/>
+                </annox:annotate>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="image-template">
+                <xsd:sequence>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+
+    <xsd:complexType name="container-template">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <annox:annotate>
+                    <annox:annotate annox:class="javax.xml.bind.annotation.XmlRootElement" name="container-template"/>
+                </annox:annotate>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:sequence>                
+            <xsd:element name="image" type="xsd:string" />
+            <xsd:element name="name" type="xsd:string" />
+            <xsd:element name="expose-ports" type="xsd:boolean" />
+            <xsd:element name="cluster-size" type="xsd:int" />
+            
+            <xsd:element name="links" type="container:link" minOccurs="0" maxOccurs="unbounded" />
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="file">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <annox:annotate>
+                    <annox:annotate annox:class="javax.xml.bind.annotation.XmlRootElement" name="file"/>
+                </annox:annotate>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:sequence>                
+            <xsd:element name="url" type="xsd:string" />
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="file-copy">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <annox:annotate>
+                    <annox:annotate annox:class="javax.xml.bind.annotation.XmlRootElement" name="file-copy"/>
+                </annox:annotate>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="file">
+                <xsd:sequence>
+                    <xsd:element name="name" type="xsd:string" />
+                    <xsd:element name="destination" type="xsd:string" />
+                    <xsd:element name="archive" type="xsd:boolean" />
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:simpleType name="application-type">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="OS" />
+            <xsd:enumeration value="SOFTWARE" />
+            <xsd:enumeration value="STANDARD" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+</xsd:schema>
