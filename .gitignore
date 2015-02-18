@@ -7,5 +7,7 @@ log.roo
 Servers
 activemq-data
 .DS_Store
+.project
+.classpath
 .settings
 RemoteSystemsTempFiles
